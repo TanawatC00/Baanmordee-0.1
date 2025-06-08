@@ -28,6 +28,18 @@ const Navbar: React.FC = () => {
             ตรวจอาการ
           </Link>
           <Link 
+            to="/chatbot" 
+            className={`${location.pathname === '/chatbot' ? 'text-medical-blue font-medium' : 'text-gray-700 hover:text-medical-blue'} transition`}
+          >
+            แชทบอท
+          </Link>
+          <Link 
+            to="/hospital-map" 
+            className={`${location.pathname === '/hospital-map' ? 'text-medical-blue font-medium' : 'text-gray-700 hover:text-medical-blue'} transition`}
+          >
+            แผนที่โรงพยาบาล
+          </Link>
+          <Link 
             to="/about" 
             className={`${location.pathname === '/about' ? 'text-medical-blue font-medium' : 'text-gray-700 hover:text-medical-blue'} transition`}
           >
