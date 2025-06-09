@@ -264,6 +264,12 @@ const Maps = () => {
     }
   };
 
+    const openInGoogleMaps = (facility: HealthFacility) => {
+    const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(facility.name)}`;
+    window.open(googleMapsUrl, '_blank');
+  };
+
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -296,10 +302,13 @@ const Maps = () => {
               <div className="p-4 border-b">
                 <div className="flex items-center gap-2 text-medical-blue">
                   <MapPin className="h-5 w-5" />
-                  <span className="font-medium">แผนที่โต้ตอบได้</span>
+                  <span className="font-medium">แผนที่</span>
                 </div>
-                <p className="text-sm text-gray-600 mt-1">
-                  ค้นหาสถานที่และคลิกที่เครื่องหมายบนแผนที่เพื่อดูข้อมูลเพิ่มเติม หมุดสีแดง = โรงพยาบาล, หมุดสีเขียว = คลินิก/ศูนย์สุขภาพ
+                <p className="text-sm text-gray-600 mt-2">
+                  ค้นหาสถานที่และคลิกที่เครื่องหมายบนแผนที่เพื่อดูข้อมูลเพิ่มเติม 
+                </p>
+                <p className="text-sm text-gray-600 mt-2">
+                  *หมุดสีแดง = โรงพยาบาล, หมุดสีเขียว = คลินิก/ศูนย์สุขภาพ
                 </p>
               </div>
               
@@ -354,7 +363,7 @@ const Maps = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleFacilityClick(facility);
+                            openInGoogleMaps(facility);
                           }}
                           className="text-medical-blue hover:text-medical-dark text-sm"
                         >
