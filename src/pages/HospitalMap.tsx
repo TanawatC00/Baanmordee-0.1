@@ -45,16 +45,43 @@ const Maps = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const bangkokMarkerRef = useRef<L.Marker | null>(null);
+  const currentLocationMarkerRef = useRef<L.Marker | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number, name: string} | null>(null);
   const [nearbyFacilities, setNearbyFacilities] = useState<HealthFacility[]>([]);
+
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371; // Radius of Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    return distance;
+  };
+  const clearAllMarkers = () => {
+    markersRef.current.forEach(marker => {
+      if (mapInstance.current) {
+        mapInstance.current.removeLayer(marker);
+      }
+    });
+    markersRef.current = [];
+  };
 
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
 
+    // Bangkok coordinates
+    const bangkokLat = 13.7563;
+    const bangkokLng = 100.5018;
+
     // Initialize the map with custom zoom control position
     mapInstance.current = L.map(mapRef.current, {
       zoomControl: false // Disable default zoom control
-    }).setView([13.7563, 100.5018], 10); // Bangkok coordinates
+    }).setView([bangkokLat, bangkokLng], 10);
 
     // Add zoom control to top-right
     L.control.zoom({
@@ -65,8 +92,8 @@ const Maps = () => {
       attribution: '© OpenStreetMap contributors'
     }).addTo(mapInstance.current);
 
-    // Add a marker for Bangkok
-    const bangkokMarker = L.marker([13.7563, 100.5018])
+    // Add a marker for Bangkok and store the reference
+    bangkokMarkerRef.current = L.marker([bangkokLat, bangkokLng])
       .addTo(mapInstance.current)
       .bindPopup('กรุงเทพมหานคร<br>Bangkok, Thailand')
       .openPopup();
@@ -79,16 +106,49 @@ const Maps = () => {
       { name: 'โรงพยาบาลเวชศาสตร์เขตร้อน', lat: 13.7297, lng: 100.5215 }
     ];
 
-    hospitals.forEach(hospital => {
-      const marker = L.marker([hospital.lat, hospital.lng], { icon: hospitalIcon })
+    // Create facilities array with distance calculation
+    const facilitiesWithDistance = hospitals.map(hospital => ({
+      ...hospital,
+      distance: calculateDistance(bangkokLat, bangkokLng, hospital.lat, hospital.lng),
+      type: 'hospital' as const
+    }));
+
+    // Sort by distance and set initial nearby facilities
+    facilitiesWithDistance.sort((a, b) => a.distance - b.distance);
+    setNearbyFacilities(facilitiesWithDistance);
+    setSelectedLocation({ lat: bangkokLat, lng: bangkokLng, name: 'กรุงเทพมหานคร' });
+
+    // Clear all markers before adding new ones
+    clearAllMarkers();
+
+    facilitiesWithDistance.forEach((facility) => {
+      const marker = L.marker([facility.lat, facility.lng], { icon: hospitalIcon })
         .addTo(mapInstance.current!)
-        .bindPopup(`<strong>${hospital.name}</strong><br>โรงพยาบาลในกรุงเทพฯ`);
-      markersRef.current.push(marker);
+        .bindPopup(`
+          <div style="min-width: 200px;">
+            <strong>${facility.name}</strong><br>
+            <small style="color: #666;">โรงพยาบาล</small><br>
+            <span style="color: #0066cc;">ระยะทาง: ${facility.distance.toFixed(1)} กม.</span><br>
+            <button onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${facility.lat},${facility.lng}', '_blank')"
+                    style="margin-top: 8px; padding: 4px 8px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              นำทาง
+            </button>
+          </div>
+        `);
+
+      // Add click event to center map on marker and handle facility click
+      marker.on('click', () => {
+        mapInstance.current?.setView([facility.lat, facility.lng], 16);
+        console.log(`Clicked on ${facility.name}`);
+      });
+
+      markersRef.current.push(marker); // <--- ต้องเก็บ marker ด้วย
     });
 
     // Cleanup function
     return () => {
       if (mapInstance.current) {
+        clearAllMarkers();
         mapInstance.current.remove();
         mapInstance.current = null;
       }
@@ -104,7 +164,19 @@ const Maps = () => {
           const { latitude, longitude } = position.coords;
           mapInstance.current!.setView([latitude, longitude], 15);
           
-          L.marker([latitude, longitude])
+          // Remove Bangkok marker when using current location
+          if (bangkokMarkerRef.current) {
+            mapInstance.current!.removeLayer(bangkokMarkerRef.current);
+            bangkokMarkerRef.current = null;
+          }
+
+          // Remove existing current location marker if any
+          if (currentLocationMarkerRef.current) {
+            mapInstance.current!.removeLayer(currentLocationMarkerRef.current);
+          }
+
+          // Add current location marker
+          currentLocationMarkerRef.current = L.marker([latitude, longitude])
             .addTo(mapInstance.current!)
             .bindPopup('ตำแหน่งปัจจุบันของคุณ')
             .openPopup();
@@ -128,12 +200,21 @@ const Maps = () => {
       const hospitalResponse = await fetch(
         `https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node["amenity"="hospital"](around:30000,${lat},${lng});way["amenity"="hospital"](around:30000,${lat},${lng});relation["amenity"="hospital"](around:30000,${lat},${lng}););out center;`
       );
+      if (!hospitalResponse.ok) {
+        throw new Error('Failed to fetch hospital data');
+      }
+      
       const hospitalData = await hospitalResponse.json();
 
       // Search for clinics and health centers
       const clinicResponse = await fetch(
         `https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node["amenity"="clinic"](around:30000,${lat},${lng});way["amenity"="clinic"](around:30000,${lat},${lng});relation["amenity"="clinic"](around:30000,${lat},${lng});node["healthcare"="centre"](around:30000,${lat},${lng});way["healthcare"="centre"](around:30000,${lat},${lng}););out center;`
       );
+      
+      if (!clinicResponse.ok) {
+        throw new Error('Failed to fetch clinic data');
+      }
+      
       const clinicData = await clinicResponse.json();
       
       const facilities: HealthFacility[] = [];
@@ -178,10 +259,7 @@ const Maps = () => {
       setNearbyFacilities(facilities);
       
       // Clear existing markers
-      markersRef.current.forEach(marker => {
-        mapInstance.current?.removeLayer(marker);
-      });
-      markersRef.current = [];
+       clearAllMarkers();
 
       // Add new markers
       facilities.forEach(facility => {
@@ -212,11 +290,24 @@ const Maps = () => {
 
     } catch (error) {
       console.error('Error searching health facilities:', error);
+      alert('เกิดข้อผิดพลาดในการค้นหาสถานพยาบาล กรุณาลองใหม่อีกครั้ง');
     }
   };
 
   const handleLocationSelect = (lat: number, lng: number, placeName: string) => {
     if (!mapInstance.current) return;
+
+    // Remove Bangkok marker when a new location is selected
+    if (bangkokMarkerRef.current) {
+      mapInstance.current.removeLayer(bangkokMarkerRef.current);
+      bangkokMarkerRef.current = null;
+    }
+
+    // Remove existing current location marker if any
+    if (currentLocationMarkerRef.current) {
+      mapInstance.current.removeLayer(currentLocationMarkerRef.current);
+      currentLocationMarkerRef.current = null;
+    }
 
     // Set the selected location
     setSelectedLocation({ lat, lng, name: placeName });
@@ -251,11 +342,10 @@ const Maps = () => {
     }
   };
 
-    const openInGoogleMaps = (facility: HealthFacility) => {
+  const openInGoogleMaps = (facility: HealthFacility) => {
     const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(facility.name)}`;
     window.open(googleMapsUrl, '_blank');
   };
-
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -269,21 +359,7 @@ const Maps = () => {
                 <h1 className="text-3xl font-bold text-medical-dark">แผนที่สถานพยาบาล</h1>
                 <p className="text-gray-600">ค้นหาโรงพยาบาล คลินิก และศูนย์สุขภาพใกล้เคียง</p>
               </div>
-              
             </div>
-
-            {selectedLocation && (
-              <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <MapPin className="h-5 w-5 text-medical-blue" />
-                  <span className="font-medium text-medical-dark">ตำแหน่งที่เลือก</span>
-                </div>
-                <p className="text-gray-600 text-sm">{selectedLocation.name}</p>
-                <p className="text-medical-blue text-sm mt-1">
-                  พบสถานพยาบาล {nearbyFacilities.length} แห่ง ในรัศมี 30 กิโลเมตร
-                </p>
-              </div>
-            )}
 
             <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
               <div className="p-4 border-b">
@@ -311,7 +387,7 @@ const Maps = () => {
                   <LocationSearch onLocationSelect={handleLocationSelect} />
                 </div>
 
-                {/* Current Location Button in bottom-left */}
+                {/* Current Location Button in bottom-right */}
                 <button
                   onClick={centerToCurrentLocation}
                   className="absolute bottom-7 right-4 w-12 h-12 bg-white hover:bg-gray-50 border-2 border-gray-300 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:shadow-xl z-[1000]"
@@ -327,7 +403,9 @@ const Maps = () => {
                 <div className="p-4 border-b">
                   <div className="flex items-center gap-2 text-medical-blue">
                     <Hospital className="h-5 w-5" />
-                    <span className="font-medium">สถานพยาบาลใกล้เคียง</span>
+                    <span className="font-medium">
+                      สถานพยาบาลใกล้เคียง{selectedLocation && ` - ${selectedLocation.name}`}
+                    </span>
                   </div>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
@@ -384,7 +462,7 @@ const Maps = () => {
                   <h3 className="font-semibold text-medical-dark">ตำแหน่งปัจจุบัน</h3>
                 </div>
                 <p className="text-gray-600 text-sm">
-                  คลิกปุ่มวงกลมในมุมซ้ายล่างของแผนที่เพื่อหาสถานพยาบาลใกล้เคียงโดยอัตโนมัติ
+                  คลิกปุ่มวงกลมในมุมขวาล่างของแผนที่เพื่อหาสถานพยาบาลใกล้เคียงโดยอัตโนมัติ
                 </p>
               </div>
 
