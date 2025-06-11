@@ -2,6 +2,7 @@
 import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Symptom } from '@/types/symptom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SelectedSymptomsListProps {
   selectedSymptoms: string[];
@@ -14,11 +15,13 @@ const SelectedSymptomsList: React.FC<SelectedSymptomsListProps> = ({
   symptoms, 
   handleSymptomToggle 
 }) => {
+  const { t } = useLanguage();
+  
   if (selectedSymptoms.length === 0) return null;
 
   return (
     <div className="mt-4 p-4 bg-medical-blue/10 rounded-md">
-      <h3 className="font-medium mb-2">อาการที่เลือก ({selectedSymptoms.length}):</h3>
+      <h3 className="font-medium mb-2">{t('symptom.selected.title').replace('{count}', selectedSymptoms.length.toString())}</h3>
       <ScrollArea className="max-h-[150px]">
         <div className="flex flex-wrap gap-2">
           {selectedSymptoms.map(id => {

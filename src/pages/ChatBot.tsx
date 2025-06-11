@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Send, Bot, User, Loader2, Trash2, MoreVertical, RefreshCw, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Layout/Navbar';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   id: string;
@@ -15,6 +16,7 @@ interface Message {
 }
 
 const ChatBot = () => {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -67,18 +69,17 @@ const ChatBot = () => {
         .from('chat_messages')
         .delete()
         .eq('user_id', userId);
-
       if (error) {
         console.error('Error clearing chat history:', error);
-        toast.error('ไม่สามารถลบประวัติการสนทนาได้');
+        toast.error(t('chatbot.errorClear'));
         return;
       }
 
       setMessages([]);
-      toast.success('ลบประวัติการสนทนาแล้ว');
+      toast.success(t('chatbot.clearSuccess'));
     } catch (error) {
       console.error('Error clearing chat history:', error);
-      toast.error('เกิดข้อผิดพลาดในการลบประวัติการสนทนา');
+      toast.error(t('chatbot.errorClear'));
     }
   };
 
@@ -131,8 +132,8 @@ const ChatBot = () => {
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error('เกิดข้อผิดพลาด', {
-        description: 'ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้ง',
+      toast.error(t('common.error'), {
+        description: t('common.tryAgain'),
       });
     } finally {
       setIsLoading(false);
@@ -152,10 +153,10 @@ const ChatBot = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-medical-blue mb-2">
-            ผู้ช่วยทางการแพทย์ AI
+            {t('chatbot.title')}
           </h1>
           <p className="text-gray-600">
-            ปรึกษาข้อมูลด้านสุขภาพ โรค ยา และการดูแลตัวเองกับ AI ผู้เชี่ยวชาญ
+            {t('chatbot.subtitle')}
           </p>
         </div>
 
@@ -213,10 +214,10 @@ const ChatBot = () => {
                 {messages.length === 0 && (
                   <div className="text-center text-gray-500 mt-20">
                     <Bot className="mx-auto h-12 w-12 mb-4 text-medical-blue" />
-                    <p className="text-lg">เริ่มปรึกษาผู้ช่วยทางการแพทย์ AI</p>
-                    <p className="text-sm">พิมพ์คำถามเกี่ยวกับสุขภาพของคุณด้านล่าง</p>
+                    <p className="text-lg">{t('chatbot.welcomeTitle')}</p>
+                    <p className="text-sm">{t('chatbot.welcomeSubtitle')}</p>
                     <div className="mt-4 text-xs text-gray-400 max-w-md mx-auto">
-                      <p>สามารถถามเรื่อง: อาการโรค, การรักษา, ยา, การดูแลสุขภาพ, โภชนาการ, การออกกำลังกาย</p>
+                      <p>{t('chatbot.examples')}</p>  
                     </div>
                   </div>
                 )}
@@ -259,7 +260,7 @@ const ChatBot = () => {
                       <div className="flex items-center gap-2">
                         <Bot className="h-5 w-5 text-medical-blue" />
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>กำลังวิเคราะห์และตอบคำถาม...</span>
+                        <span>{t('chatbot.thinking')}</span>
                       </div>
                     </div>
                   </div>
@@ -274,7 +275,7 @@ const ChatBot = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="พิมพ์คำถามเกี่ยวกับสุขภาพที่นี่... เช่น 'ฉันมีอาการปวดหัด มีวิธีดูแลอย่างไร?'"
+                  placeholder={t('chatbot.placeholder')}
                   className="flex-1 min-h-[50px] max-h-[120px] resize-none"
                   disabled={isLoading}
                 />

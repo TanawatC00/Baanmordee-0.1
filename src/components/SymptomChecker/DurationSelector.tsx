@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { SymptomDuration } from '@/types/symptom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DurationSelectorProps {
   durations: SymptomDuration[];
@@ -14,9 +15,11 @@ const DurationSelector: React.FC<DurationSelectorProps> = ({
   selectedDuration, 
   setSelectedDuration 
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-medium mb-3">ระยะเวลาของอาการ:</h3>
+      <h3 className="text-lg font-medium mb-3">{t('symptom.duration.title')}</h3>
       <div className="flex flex-wrap gap-2">
         {durations.map((duration: SymptomDuration) => (
           <Button

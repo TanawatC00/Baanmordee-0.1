@@ -13,8 +13,10 @@ import SymptomList from './SymptomList';
 import SelectedSymptomsList from './SelectedSymptomsList';
 import { useSymptomData } from '@/hooks/useSymptomData';
 import { Search } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const SymptomSelector: React.FC = () => {
+  const { t } = useLanguage();
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [selectedDuration, setSelectedDuration] = useState<string>('days');
   const [diagnoses, setDiagnoses] = useState<Condition[]>([]);
@@ -51,8 +53,8 @@ const SymptomSelector: React.FC = () => {
     } catch (error) {
       console.error("Error diagnosing conditions:", error);
       toast({
-        title: "เกิดข้อผิดพลาด",
-        description: "ไม่สามารถวิเคราะห์อาการได้ กรุณาลองใหม่อีกครั้ง",
+        title: t('symptom.error.title'),
+        description: t('symptom.error.diagnose'),
         variant: "destructive"
       });
     }
@@ -75,7 +77,7 @@ const SymptomSelector: React.FC = () => {
       <div className="flex justify-center items-center h-[60vh]">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-medical-blue mb-4 mx-auto"></div>
-          <p className="text-medical-blue">กำลังโหลดข้อมูล...</p>
+          <p className="text-medical-blue">{t('symptom.loading')}</p>
         </div>
       </div>
     );
@@ -102,7 +104,7 @@ const SymptomSelector: React.FC = () => {
     <div className="mt-6">
       <Card className="border-medical-blue/20">
         <CardContent className="pt-6">
-          <h2 className="text-2xl font-semibold text-medical-blue mb-4">เลือกอาการที่คุณกำลังประสบ</h2>
+          <h2 className="text-2xl font-semibold text-medical-blue mb-4">{t('symptom.selector.title')}</h2>
           
           <DurationSelector 
             durations={durations}
@@ -113,7 +115,7 @@ const SymptomSelector: React.FC = () => {
           <div className="mb-4">
             <div className="relative mb-4">
               <Input 
-                placeholder="ค้นหาอาการ..." 
+                placeholder={t('symptom.search.placeholder')} 
                 className="w-full pl-10" 
                 value={searchQuery}
                 onChange={handleSearch}
@@ -121,7 +123,7 @@ const SymptomSelector: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               {searchQuery && (
                 <div className="text-xs text-gray-500 mt-1">
-                  พบ {searchMatchCount} อาการที่ตรงกับการค้นหา
+                  {t('symptom.search.results').replace('{count}', searchMatchCount.toString())}
                 </div>
               )}
             </div>
@@ -142,14 +144,14 @@ const SymptomSelector: React.FC = () => {
 
           <div className="flex justify-between mt-8">
             <Button variant="outline" onClick={handleReset} className="border-medical-red text-medical-red hover:bg-medical-red/10">
-              ล้างค่า
+              {t('symptom.clear')}
             </Button>
             <Button 
               onClick={handleDiagnose} 
               disabled={selectedSymptoms.length === 0}
               className="bg-medical-blue hover:bg-medical-blue/90 text-white"
             >
-              วิเคราะห์อาการ
+              {t('symptom.analyze')}
             </Button>
           </div>
         </CardContent>

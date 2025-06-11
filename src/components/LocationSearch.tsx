@@ -1,4 +1,4 @@
-
+import { useLanguage } from '@/contexts/LanguageContext';
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { Input } from './ui/input';
@@ -19,6 +19,7 @@ interface SearchResult {
 }
 
 const LocationSearch: React.FC<LocationSearchProps> = ({ onLocationSelect }) => {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -197,7 +198,7 @@ const LocationSearch: React.FC<LocationSearchProps> = ({ onLocationSelect }) => 
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           type="text"
-          placeholder="ค้นหาสถานที่ในประเทศไทย..."
+          placeholder={t('maps.searchPlaceholder')}
           value={searchQuery}
           onChange={handleInputChange}
           onFocus={handleInputFocus}

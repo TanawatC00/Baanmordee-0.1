@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import Navbar from '../components/Layout/Navbar';
 import LocationSearch from '../components/LocationSearch';
 import { MapPin, Navigation, Hospital, Search, Building } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Fix for default markers in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -49,6 +50,7 @@ const Maps = () => {
   const currentLocationMarkerRef = useRef<L.Marker | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number, name: string} | null>(null);
   const [nearbyFacilities, setNearbyFacilities] = useState<HealthFacility[]>([]);
+  const { t } = useLanguage();
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     const R = 6371; // Radius of Earth in kilometers
@@ -356,8 +358,8 @@ const Maps = () => {
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-medical-dark">แผนที่สถานพยาบาล</h1>
-                <p className="text-gray-600">ค้นหาโรงพยาบาล คลินิก และศูนย์สุขภาพใกล้เคียง</p>
+                <h1 className="text-3xl font-bold text-medical-dark">{t('maps.title')}</h1>
+                <p className="text-gray-600">{t('maps.subtitle')}</p>
               </div>
             </div>
 
@@ -365,13 +367,13 @@ const Maps = () => {
               <div className="p-4 border-b">
                 <div className="flex items-center gap-2 text-medical-blue">
                   <MapPin className="h-5 w-5" />
-                  <span className="font-medium">แผนที่</span>
+                  <span className="font-medium">{t('maps.interactiveMap')}</span>
                 </div>
                 <p className="text-sm text-gray-600 mt-2">
-                  ค้นหาสถานที่และคลิกที่เครื่องหมายบนแผนที่เพื่อดูข้อมูลเพิ่มเติม 
+                  {t('maps.selectLocation')}
                 </p>
                 <p className="text-sm text-gray-600 mt-2">
-                  *หมุดสีแดง = โรงพยาบาล, หมุดสีเขียว = คลินิก/ศูนย์สุขภาพ
+                  *{t('maps.type')}: <span className="text-red-500">{t('maps.typeHospital')}</span>, <span className="text-green-500">{t('maps.typeClinic')}</span>
                 </p>
               </div>
               
@@ -391,7 +393,7 @@ const Maps = () => {
                 <button
                   onClick={centerToCurrentLocation}
                   className="absolute bottom-7 right-4 w-12 h-12 bg-white hover:bg-gray-50 border-2 border-gray-300 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:shadow-xl z-[1000]"
-                  title="ตำแหน่งปัจจุบัน"
+                  title={t('maps.myLocation')}
                 >
                   <Navigation className="h-5 w-5 text-medical-blue" />
                 </button>
@@ -404,7 +406,7 @@ const Maps = () => {
                   <div className="flex items-center gap-2 text-medical-blue">
                     <Hospital className="h-5 w-5" />
                     <span className="font-medium">
-                      สถานพยาบาลใกล้เคียง{selectedLocation && ` - ${selectedLocation.name}`}
+                      {t('maps.nearbyFacilities')}{selectedLocation && ` - ${selectedLocation.name}`}
                     </span>
                   </div>
                 </div>
@@ -422,7 +424,11 @@ const Maps = () => {
                             <h4 className="font-medium text-medical-dark">{facility.name}</h4>
                           </div>
                           <p className="text-sm text-gray-600">
-                            {facility.type === 'hospital' ? 'โรงพยาบาล' : 'คลินิก/ศูนย์สุขภาพ'} • ระยะทาง: {facility.distance?.toFixed(1)} กิโลเมตร
+                            {facility.type === 'hospital'
+                              ? t('maps.type') + t('maps.typeHospital')
+                              : t('maps.type') + t('maps.typeClinic')
+                            }
+                            • {t('maps.distance')}: {facility.distance?.toFixed(1)} {t('maps.distance').includes('km') ? '' : 'กิโลเมตร'}
                           </p>
                         </div>
                         <button
@@ -432,7 +438,7 @@ const Maps = () => {
                           }}
                           className="text-medical-blue hover:text-medical-dark text-sm"
                         >
-                          ดูบนแผนที่
+                          {t('maps.viewOnMap')}
                         </button>
                       </div>
                     </div>
@@ -441,47 +447,9 @@ const Maps = () => {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-medical-blue rounded-full flex items-center justify-center">
-                    <Search className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-medical-dark">ค้นหาสถานที่</h3>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  พิมพ์อย่างน้อย 3 ตัวอักษรเพื่อค้นหาสถานที่และแสดงสถานพยาบาลใกล้เคียง
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-medical-teal rounded-full flex items-center justify-center">
-                    <Navigation className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-medical-dark">ตำแหน่งปัจจุบัน</h3>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  คลิกปุ่มวงกลมในมุมขวาล่างของแผนที่เพื่อหาสถานพยาบาลใกล้เคียงโดยอัตโนมัติ
-                </p>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm border">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-medical-orange rounded-full flex items-center justify-center">
-                    <Hospital className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-medical-dark">สถานพยาบาลใกล้เคียง</h3>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  แสดงโรงพยาบาล คลินิก และศูนย์สุขภาพทั้งหมดในรัศมี 30 กิโลเมตรเรียงตามระยะทาง
-                </p>
-              </div>
-            </div>
             <div className="mt-12 text-center text-sm text-gray-500">
               <p>
-                <strong>คำเตือน:</strong> ระบบตรวจสอบอาการนี้ไม่ใช่การวินิจฉัยทางการแพทย์ 
-                และไม่สามารถทดแทนการพบแพทย์ได้ กรุณาพบแพทย์หากมีอาการรุนแรงหรือกังวล
+                <strong>{t('common.warning')}</strong>: {t('symptom.disclaimer')}
               </p>
             </div>
           </div>
@@ -490,7 +458,7 @@ const Maps = () => {
 
       <footer className="bg-white shadow-inner py-6 border-t">
         <div className="container mx-auto px-4 text-center text-gray-600">
-          <p>© 2025 บ้านหมอดี - ระบบตรวจสอบอาการเบื้องต้น</p>
+          <p>{t('footer.copyright')}</p>
         </div>
       </footer>
     </div>

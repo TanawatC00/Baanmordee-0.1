@@ -3,6 +3,7 @@ import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Symptom } from '@/types/symptom';
 import SymptomCard from './SymptomCard';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SymptomListProps {
   filteredSymptoms: Symptom[];
@@ -15,12 +16,14 @@ const SymptomList: React.FC<SymptomListProps> = ({
   selectedSymptoms, 
   handleSymptomToggle 
 }) => {
+  const { t } = useLanguage();
+  
   // หากไม่มีอาการที่ตรงกับการค้นหา
   if (filteredSymptoms.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>ไม่พบอาการที่ตรงกับการค้นหา</p>
-        <p className="text-sm mt-2">ลองค้นหาด้วยคำที่แตกต่างหรือเลือกจากหมวดหมู่</p>
+        <p>{t('symptom.noResults')}</p>
+        <p className="text-sm mt-2">{t('symptom.noResultsDesc')}</p>
       </div>
     );
   }

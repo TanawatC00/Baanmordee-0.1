@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategorySelectorProps {
   categories: SymptomCategory[];
@@ -24,8 +25,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
   setActiveCategory,
   getCategoryCount
 }) => {
-  // For mobile view, we'll use a dropdown instead of horizontal scrolling
-  const [showDropdown, setShowDropdown] = React.useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="w-full">
@@ -37,7 +37,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
               variant="outline" 
               className="w-full justify-between"
             >
-              {categories.find(cat => cat.id === activeCategory)?.name || 'เลือกหมวดหมู่'}
+              {categories.find(cat => cat.id === activeCategory)?.name || t('symptom.category.select')}
               <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
           </DropdownMenuTrigger>
