@@ -296,15 +296,14 @@ const ChatBot = () => {
           </Card>
           <div className="mt-12 text-center text-sm text-gray-500">
             <p>
-              <strong>คำเตือน:</strong> ระบบตรวจสอบอาการนี้ไม่ใช่การวินิจฉัยทางการแพทย์ 
-              และไม่สามารถทดแทนการพบแพทย์ได้ กรุณาพบแพทย์หากมีอาการรุนแรงหรือกังวล
+              <strong>{t('common.warning')}:</strong> {t('symptom.disclaimer')}
             </p>
           </div>
         </div>
       </div>
       <footer className="bg-white shadow-inner py-6 border-t">
         <div className="container mx-auto px-4 text-center text-gray-600">
-          <p>© 2025 บ้านหมอดี - ระบบตรวจสอบอาการเบื้องต้น</p>
+          <p>{t('footer.copyright')}</p>
         </div>
       </footer>
     </div>

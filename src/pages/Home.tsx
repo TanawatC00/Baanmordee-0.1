@@ -14,7 +14,7 @@ const Home = () => {
       <main className="container mx-auto px-4 py-12 flex-grow">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-medical-blue mb-6">
-            {language === 'th' ? 'บ้านหมอดี' : 'Doctor Home'}
+            {language === 'th' ? 'บ้านหมอดี' : 'Doctor at Home'}
           </h1>
           <p className="text-xl text-gray-700 mb-8">
             {t('home.description')}

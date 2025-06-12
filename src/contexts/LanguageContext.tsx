@@ -137,7 +137,7 @@ const translations = {
     'about.devTeamDescription': 'แอปพลิเคชันนี้พัฒนาโดยนักเรียนที่มีความสนใจทางด้านการพัฒนาโปรแกรม และต้องการให้สามารถนำไปใช้ประโยชน์ได้<br />'
   + 'โดยประกอบไปด้วย:<br />'
   + '<span style="display:block; margin-left:2em;">นายธนวัฒน์ ฉายศิริวัฒนา</span>'
-  + '<span style="display:block; margin-left:2em;">นางสาวชยิสรา ไชยศักดิ์</span>',
+  + '<span style="display:block; margin-left:2em;">นางสาวอธิภัทร จิราภารัญชน์</span>',
     'about.medicalAdvisor': 'ที่ปรึกษาทางการแพทย์',
     'about.medicalAdvisorDescription': 'ข้อมูลทางการแพทย์ในแอปพลิเคชันนี้ได้รับการตรวจสอบโดยผู้เชี่ยวชาญทางการแพทย์เพื่อให้มั่นใจในความถูกต้องและความเหมาะสม อย่างไรก็ตาม โปรดทราบว่าข้อมูลนี้ไม่สามารถทดแทนคำแนะนำทางการแพทย์โดยตรงจากแพทย์ได้',
     'about.contact': 'ติดต่อเรา',
@@ -201,7 +201,7 @@ const translations = {
     'nav.register': 'Register',
     
     // Home page
-    'home.title': 'Doctor Home',
+    'home.title': 'Doctor at Home',
     'home.subtitle': 'Easy Self Symptom Checking',
     'home.description': 'Free, easy, and fast online preliminary symptom checking service',
     'home.features.symptomChecker': 'Fast',
@@ -211,7 +211,7 @@ const translations = {
     'home.features.hospitalMap': 'Comprehensive Information',
     'home.features.hospitalMapDesc': 'Get information about possible causes and self-care recommendations',
     'home.getStarted': 'Start Checking Symptoms',
-    'home.disclaimer': 'Doctor Home provides preliminary information only, not medical diagnosis. If you have severe symptoms or concerns, please see a doctor immediately',
+    'home.disclaimer': 'Doctor at Home provides preliminary information only, not medical diagnosis. If you have severe symptoms or concerns, please see a doctor immediately',
     
     // Symptom Checker
     'symptom.title': 'Self Preliminary Symptom Checking System',
@@ -291,10 +291,10 @@ const translations = {
     'maps.searchPlaceholder': 'Search for healthcare facilities',
 
     // About
-    'about.title': 'About Doctor Home',
+    'about.title': 'About Doctor at Home',
     'about.subtitle': 'Learn more about our symptom checking application',
     'about.aboutProject': 'About the Project',
-    'about.projectDescription1': 'Doctor Home is an application designed to help users check preliminary symptoms by themselves. Its purpose is to provide preliminary information and guidance, not to replace medical diagnosis by doctors',
+    'about.projectDescription1': 'Doctor at Home is an application designed to help users check preliminary symptoms by themselves. Its purpose is to provide preliminary information and guidance, not to replace medical diagnosis by doctors',
     'about.projectDescription2': 'This application is suitable for those who want to learn more about their symptoms before deciding to see a doctor, or to get additional information about basic self-care',
     'about.howToUse': 'How to Use',
     'about.usageDescription': 'Using our symptom checking application follows these steps',
@@ -315,7 +315,7 @@ const translations = {
     'about.devTeamDescription': 'This application was developed by students who are passionate about programming and want it to be useful.<br />'
   + 'The team consists of:<br />'
   + '<span style="display:block; margin-left:2em;">Mr. Tanawat Chaisiriwattana</span>'
-  + '<span style="display:block; margin-left:2em;">Ms. Chayisara Chaiyasak</span>',
+  + '<span style="display:block; margin-left:2em;">Mr. Athiphat Chiraparan</span>',
     'about.medicalAdvisor': 'Medical Advisor',
     'about.medicalAdvisorDescription': 'Medical information in this application has been reviewed by medical experts to ensure accuracy and appropriateness. However, please note that this information cannot replace direct medical advice from doctors',
     'about.contact': 'Contact Us',

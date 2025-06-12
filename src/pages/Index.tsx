@@ -15,7 +15,7 @@ const Index = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-medical-blue mb-4">
-              {language === 'th' ? 'บ้านหมอดี' : 'Doctor Home'}
+              {language === 'th' ? 'บ้านหมอดี' : 'Doctor at Home'}
             </h1>
             <p className="text-lg text-gray-600 mb-2">
               {t('symptom.title')}
