@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Symptom } from '@/types/symptom';
@@ -6,16 +5,16 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SelectedSymptomsListProps {
   selectedSymptoms: string[];
+  onRemoveSymptom: (id: string) => void;
   symptoms: Symptom[];
-  handleSymptomToggle: (id: string) => void;
 }
 
-const SelectedSymptomsList: React.FC<SelectedSymptomsListProps> = ({ 
-  selectedSymptoms, 
-  symptoms, 
-  handleSymptomToggle 
+const SelectedSymptomsList: React.FC<SelectedSymptomsListProps> = ({
+  selectedSymptoms,
+  onRemoveSymptom,
+  symptoms = []
 }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   if (selectedSymptoms.length === 0) return null;
 
@@ -28,9 +27,13 @@ const SelectedSymptomsList: React.FC<SelectedSymptomsListProps> = ({
             const symptom = symptoms.find(s => s.id === id);
             return (
               <div key={id} className="bg-white px-3 py-1 rounded-full border border-medical-blue/20 flex items-center">
-                <span>{symptom?.name.split(':')[0]}</span>
+                <span className="font-medium">
+                  {symptom
+                    ? (language === 'th' ? symptom.name : (symptom.name_en || symptom.name))
+                    : id}
+                </span>
                 <button 
-                  onClick={() => handleSymptomToggle(id)}
+                  onClick={() => onRemoveSymptom(id)}
                   className="ml-2 text-medical-red hover:text-medical-red/80"
                 >
                   &times;
@@ -45,3 +48,5 @@ const SelectedSymptomsList: React.FC<SelectedSymptomsListProps> = ({
 };
 
 export default SelectedSymptomsList;
+
+

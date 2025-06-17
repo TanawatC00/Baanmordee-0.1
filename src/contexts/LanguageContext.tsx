@@ -51,6 +51,9 @@ const translations = {
     'symptom.loading': 'กำลังโหลดข้อมูล...',
     'symptom.error.diagnose': 'ไม่สามารถวิเคราะห์อาการได้ กรุณาลองใหม่อีกครั้ง',
     'symptom.error.title': 'เกิดข้อผิดพลาด',
+    'symptom.duration.less_than_a_day': 'ไม่ถึง 1 วัน',
+    'symptom.duration.week': 'ประมาณ 1 สัปดาห์',
+    'symptom.duration.more_than_a_week': 'เกิน 1 สัปดาห์ขึ้นไป',
     
     // Diagnosis Results
     'diagnosis.title': 'ผลการวิเคราะห์อาการเบื้องต้น',
@@ -111,6 +114,7 @@ const translations = {
     'maps.typeHospital': 'โรงพยาบาล',
     'maps.typeClinic': 'คลินิก/ศูนย์สุขภาพ',
     'maps.searchPlaceholder': 'ค้นหาสถานพยาบาล',
+    'maps.currentLocation': 'ตำแหน่งปัจจุบันของคุณ',
     
     // About
     'about.title': 'เกี่ยวกับบ้านหมอดี',
@@ -137,7 +141,7 @@ const translations = {
     'about.devTeamDescription': 'แอปพลิเคชันนี้พัฒนาโดยนักเรียนที่มีความสนใจทางด้านการพัฒนาโปรแกรม และต้องการให้สามารถนำไปใช้ประโยชน์ได้<br />'
   + 'โดยประกอบไปด้วย:<br />'
   + '<span style="display:block; margin-left:2em;">นายธนวัฒน์ ฉายศิริวัฒนา</span>'
-  + '<span style="display:block; margin-left:2em;">นางสาวอธิภัทร จิราภารัญชน์</span>',
+  + '<span style="display:block; margin-left:2em;">นายอะิภัทร จิราภารัญชน์</span>',
     'about.medicalAdvisor': 'ที่ปรึกษาทางการแพทย์',
     'about.medicalAdvisorDescription': 'ข้อมูลทางการแพทย์ในแอปพลิเคชันนี้ได้รับการตรวจสอบโดยผู้เชี่ยวชาญทางการแพทย์เพื่อให้มั่นใจในความถูกต้องและความเหมาะสม อย่างไรก็ตาม โปรดทราบว่าข้อมูลนี้ไม่สามารถทดแทนคำแนะนำทางการแพทย์โดยตรงจากแพทย์ได้',
     'about.contact': 'ติดต่อเรา',
@@ -230,6 +234,9 @@ const translations = {
     'symptom.loading': 'Loading data...',
     'symptom.error.diagnose': 'Unable to analyze symptoms. Please try again',
     'symptom.error.title': 'An error occurred',
+    'symptom.duration.less_than_a_day': 'Less than 1 day',
+    'symptom.duration.week': '1 week',
+    'symptom.duration.more_than_a_week': 'More than 1 week',
     
     // Diagnosis Results
     'diagnosis.title': 'Preliminary Symptom Analysis Results',
@@ -289,6 +296,7 @@ const translations = {
     'maps.typeHospital': 'Hospital',
     'maps.typeClinic': 'Clinic/Health Center',
     'maps.searchPlaceholder': 'Search for healthcare facilities',
+    'maps.currentLocation': 'Your current location',
 
     // About
     'about.title': 'About Doctor at Home',

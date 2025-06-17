@@ -74,12 +74,11 @@ export const diagnoseConditions = (selectedSymptomIds: string[]): Promise<Condit
           selectedSymptomIds.includes(id)
         );
         
-        // คำนวณคะแนนความเป็นไปได้โดยพิจารณาทั้งจำนวนอาการที่ตรงกันและสัดส่วนของอาการที่ตรงกัน
+        // Calculate score based on matching symptoms count and percentage
         const matchCount = matchingSymptoms.length;
         const percentageMatch = Math.round((matchingSymptoms.length / condition.symptoms.length) * 100);
         
-        // คำนวณคะแนนรวม โดยให้น้ำหนักทั้งจำนวนอาการที่ตรงกันและเปอร์เซ็นต์ความตรงกัน
-        // โรคที่มีอาการตรงกันมากและมีสัดส่วนอาการตรงกันสูงจะได้คะแนนมาก
+        // Combined score: 60% weight on match count, 40% on percentage
         const relevanceScore = (matchCount * 0.6) + (percentageMatch * 0.4);
         
         return {
@@ -89,18 +88,18 @@ export const diagnoseConditions = (selectedSymptomIds: string[]): Promise<Condit
           relevanceScore
         };
       })
-      .filter(condition => condition.matchCount > 0) // กรองเฉพาะโรคที่มีอาการตรงกันอย่างน้อย 1 อย่าง
+      .filter(condition => condition.matchCount > 0) // Only conditions with at least 1 matching symptom
       .sort((a, b) => {
-        // เรียงลำดับตามคะแนนความเกี่ยวข้อง (relevance score)
+        // Sort by relevance score
         if (b.relevanceScore !== a.relevanceScore) {
           return b.relevanceScore! - a.relevanceScore!;
         }
         
-        // ถ้าคะแนนเท่ากัน ให้เรียงตามความรุนแรงของโรค
+        // If same score, sort by severity
         const severityOrder = { 'severe': 3, 'moderate': 2, 'mild': 1 };
         return severityOrder[b.severity as keyof typeof severityOrder] - 
                severityOrder[a.severity as keyof typeof severityOrder];
       })
-      .slice(0, 3); // แสดงเฉพาะ 3 โรคแรกที่มีความเป็นไปได้มากที่สุด
+      .slice(0, 3); // Show only top 3 most likely conditions
   });
 };

@@ -18,7 +18,6 @@ const SymptomList: React.FC<SymptomListProps> = ({
 }) => {
   const { t } = useLanguage();
   
-  // หากไม่มีอาการที่ตรงกับการค้นหา
   if (filteredSymptoms.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">

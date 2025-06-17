@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Symptom } from '@/types/symptom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SymptomCardProps {
   symptom: Symptom;
@@ -10,8 +10,13 @@ interface SymptomCardProps {
 }
 
 const SymptomCard: React.FC<SymptomCardProps> = ({ symptom, selected, onToggle }) => {
-  // Split the symptom name into main name and description if it has any
-  const parts = symptom.name.split(':');
+  const { language } = useLanguage();
+
+  // เลือกชื่ออาการตามภาษา
+  const displayName = language === 'th' ? symptom.name : (symptom.name_en || symptom.name);
+
+  // Split the displayName into main name and description if it has any
+  const parts = displayName.split(':');
   const mainName = parts[0].trim();
   const description = parts.length > 1 ? parts[1].trim() : null;
 

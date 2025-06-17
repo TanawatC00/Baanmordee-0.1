@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,19 +12,19 @@ import { ChevronDown } from "lucide-react";
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategorySelectorProps {
-  categories: SymptomCategory[];
   activeCategory: string;
-  setActiveCategory: (id: string) => void;
+  onCategoryChange: (category: string) => void;
+  categories: SymptomCategory[];
   getCategoryCount: (categoryId: string) => number;
 }
 
 const CategorySelector: React.FC<CategorySelectorProps> = ({ 
   categories, 
   activeCategory, 
-  setActiveCategory,
+  onCategoryChange,
   getCategoryCount
-}) => {
-  const { t } = useLanguage();
+}) => { 
+  const { t, language } = useLanguage();
 
   return (
     <div className="w-full">
@@ -37,7 +36,11 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
               variant="outline" 
               className="w-full justify-between"
             >
-              {categories.find(cat => cat.id === activeCategory)?.name || t('symptom.category.select')}
+              {(() => {
+                const cat = categories.find(cat => cat.id === activeCategory);
+                if (!cat) return t('symptom.category.select');
+                return language === 'th' ? cat.name : (cat.name_en || cat.name);
+              })()}
               <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
           </DropdownMenuTrigger>
@@ -45,10 +48,10 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
             {categories.map((category) => (
               <DropdownMenuItem 
                 key={category.id}
-                onClick={() => setActiveCategory(category.id)}
+                onClick={() => onCategoryChange(category.id)}
                 className={activeCategory === category.id ? "bg-medical-blue/10" : ""}
               >
-                {category.name} ({getCategoryCount(category.id)})
+                {language === 'th' ? category.name : (category.name_en || category.name)} ({getCategoryCount(category.id)})
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -64,9 +67,9 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({
                 key={category.id}
                 variant={activeCategory === category.id ? "default" : "outline"}
                 className={`whitespace-nowrap ${activeCategory === category.id ? "bg-medical-blue" : ""}`}
-                onClick={() => setActiveCategory(category.id)}
+                onClick={() => onCategoryChange(category.id)}
               >
-                {category.name} ({getCategoryCount(category.id)})
+                {language === 'th' ? category.name : (category.name_en || category.name)} ({getCategoryCount(category.id)})
               </Button>
             ))}
           </div>

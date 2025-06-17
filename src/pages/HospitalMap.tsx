@@ -50,7 +50,7 @@ const Maps = () => {
   const currentLocationMarkerRef = useRef<L.Marker | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<{lat: number, lng: number, name: string} | null>(null);
   const [nearbyFacilities, setNearbyFacilities] = useState<HealthFacility[]>([]);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     const R = 6371; // Radius of Earth in kilometers
@@ -157,6 +157,7 @@ const Maps = () => {
     };
   }, []);
 
+  // ฟังก์ชันค้นหาตำแหน่ง
   const centerToCurrentLocation = () => {
     if (!mapInstance.current) return;
 
@@ -180,7 +181,7 @@ const Maps = () => {
           // Add current location marker
           currentLocationMarkerRef.current = L.marker([latitude, longitude])
             .addTo(mapInstance.current!)
-            .bindPopup('ตำแหน่งปัจจุบันของคุณ')
+            .bindPopup(t('maps.currentLocation')) // <-- ใช้ t() สำหรับแปลภาษา
             .openPopup();
 
           // Search for health facilities near current location
@@ -348,6 +349,13 @@ const Maps = () => {
     const googleMapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(facility.name)}`;
     window.open(googleMapsUrl, '_blank');
   };
+
+  // อัปเดต popup content เมื่อเปลี่ยนภาษา
+  useEffect(() => {
+    if (currentLocationMarkerRef.current) {
+      currentLocationMarkerRef.current.setPopupContent(t('maps.currentLocation'));
+    }
+  }, [language, t]);
 
   return (
     <div className="min-h-screen flex flex-col">

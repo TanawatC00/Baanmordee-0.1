@@ -36,33 +36,45 @@ export type Database = {
       conditions: {
         Row: {
           description: string | null
+          description_en: string | null
           id: string
           medications: string[] | null
+          medications_en: string[] | null
           name: string
+          name_en: string | null
           seek_medical_attention: boolean
           self_care: string | null
+          self_care_en: string | null
           severity: string
           symptoms: string[]
           urgency: string | null
         }
         Insert: {
           description?: string | null
+          description_en?: string | null
           id: string
           medications?: string[] | null
+          medications_en?: string[] | null
           name: string
+          name_en?: string | null
           seek_medical_attention: boolean
           self_care?: string | null
+          self_care_en?: string | null
           severity: string
           symptoms: string[]
           urgency?: string | null
         }
         Update: {
           description?: string | null
+          description_en?: string | null
           id?: string
           medications?: string[] | null
+          medications_en?: string[] | null
           name?: string
+          name_en?: string | null
           seek_medical_attention?: boolean
           self_care?: string | null
+          self_care_en?: string | null
           severity?: string
           symptoms?: string[]
           urgency?: string | null
@@ -73,14 +85,17 @@ export type Database = {
         Row: {
           id: string
           name: string
+          name_en: string | null
         }
         Insert: {
           id: string
           name: string
+          name_en?: string | null
         }
         Update: {
           id?: string
           name?: string
+          name_en?: string | null
         }
         Relationships: []
       }
@@ -88,14 +103,17 @@ export type Database = {
         Row: {
           id: string
           name: string
+          name_en: string | null
         }
         Insert: {
           id: string
           name: string
+          name_en?: string | null
         }
         Update: {
           id?: string
           name?: string
+          name_en?: string | null
         }
         Relationships: []
       }
@@ -104,16 +122,19 @@ export type Database = {
           category: string
           id: string
           name: string
+          name_en: string | null
         }
         Insert: {
           category: string
           id: string
           name: string
+          name_en?: string | null
         }
         Update: {
           category?: string
           id?: string
           name?: string
+          name_en?: string | null
         }
         Relationships: [
           {

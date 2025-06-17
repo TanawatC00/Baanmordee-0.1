@@ -207,12 +207,11 @@ const ChatBot = () => {
             )}
           </div>
 
-          <Card className="max-h-[90vh] flex flex-col">
+          <Card className="max-h-[90vh] flex flex-col h-[70vh]">
             <CardContent className="flex-1 flex flex-col p-6 overflow-y-auto">
-              {/* Messages Area */}
               <div className="flex-1 overflow-y-auto mb-4 space-y-4">
                 {messages.length === 0 && (
-                  <div className="text-center text-gray-500 mt-20">
+                  <div className="flex flex-col justify-center items-center min-h-[50vh]">
                     <Bot className="mx-auto h-12 w-12 mb-4 text-medical-blue" />
                     <p className="text-lg">{t('chatbot.welcomeTitle')}</p>
                     <p className="text-sm">{t('chatbot.welcomeSubtitle')}</p>

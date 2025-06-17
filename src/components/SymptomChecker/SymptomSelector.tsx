@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +13,13 @@ import SelectedSymptomsList from './SelectedSymptomsList';
 import { useSymptomData } from '@/hooks/useSymptomData';
 import { Search } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+// Remove this interface if CategorySelector defines its own props elsewhere
+interface SelectedSymptomsListProps {
+  selectedSymptoms: string[];
+  onRemoveSymptom: (id: string) => void;
+  // other props if any
+}
 
 const SymptomSelector: React.FC = () => {
   const { t } = useLanguage();
@@ -35,12 +41,17 @@ const SymptomSelector: React.FC = () => {
     filterSymptoms 
   } = useSymptomData();
 
-  const handleSymptomToggle = (symptomId: string) => {
+  // Function to remove a symptom from the selectedSymptoms array
+  const onRemoveSymptom = (id: string) => {
+    setSelectedSymptoms(prev => prev.filter(symptomId => symptomId !== id));
+  };
+
+  const handleSymptomToggle = (id: string) => {
     setSelectedSymptoms(prev => {
-      if (prev.includes(symptomId)) {
-        return prev.filter(id => id !== symptomId);
+      if (prev.includes(id)) {
+        return prev.filter(symptomId => symptomId !== id);
       } else {
-        return [...prev, symptomId];
+        return [...prev, id];
       }
     });
   };
@@ -107,9 +118,8 @@ const SymptomSelector: React.FC = () => {
           <h2 className="text-2xl font-semibold text-medical-blue mb-4">{t('symptom.selector.title')}</h2>
           
           <DurationSelector 
-            durations={durations}
             selectedDuration={selectedDuration}
-            setSelectedDuration={setSelectedDuration}
+            onDurationChange={setSelectedDuration}
           />
           
           <div className="mb-4">
@@ -129,9 +139,9 @@ const SymptomSelector: React.FC = () => {
             </div>
             
             <CategorySelector
-              categories={categories}
               activeCategory={activeCategory}
-              setActiveCategory={setActiveCategory}
+              onCategoryChange={setActiveCategory}
+              categories={categories}
               getCategoryCount={getCategoryCount}
             />
           </div>
@@ -157,10 +167,10 @@ const SymptomSelector: React.FC = () => {
         </CardContent>
       </Card>
 
-      <SelectedSymptomsList 
+      <SelectedSymptomsList
         selectedSymptoms={selectedSymptoms}
+        onRemoveSymptom={onRemoveSymptom}
         symptoms={symptoms}
-        handleSymptomToggle={handleSymptomToggle}
       />
     </div>
   );
